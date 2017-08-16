@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+  <head>
+     <meta charset="UTF-8">
+  </head>
+  <body>
+    <div class="row">
+      <div class="col-xs-12 col-md-12">
+		<h2>Mars Rover Tech Challange</h2>
+		<div class="row">
+		  <div>
+		    <p>Enter the number of Rovers:</p>
+		    <input id="numRovers" type="number">
+		  </div>
+		  <div>
+		    <p>Enter the grid size:</p>
+		    <input id="gridSize" type="number">
+		  </div>
+		  <br>
+		  <div>
+		    <button id="submitBtn" onclick="PrepareRoverInputs()">Submit</button>
+		  </div>
+		</div>
+		
+		<hr>
+		
+		<div class="row" id="roverInputs" style="visibility: hidden">
+		  
+		</div>
+		<br>
+		<div class="row" id="resultTable" style="visibility: hidden">
+		  
+		</div>
+		
+		<div>
+		</div>
+	  </div>
+	</div>
+
+
+
+	<script>
+	  function PrepareRoverInputs()
+	  {
+	    var numRovers = document.getElementById('numRovers').value;
+		if(numRovers>0)
+		{
+		var div = document.getElementById('roverInputs');
+		div.innerHTML = '';
+		  var roversInputHtml = ""; 
+		  for(i=1; i<=numRovers; i++)
+		  {
+		    var roverHtml = "";
+			roverHtml = '<div>' +
+		                '<p>Mars Rover ' + i + ':</p>' +
+		                '<input id="roverMovementInput' + i + '">' +
+		                '<input id="roverPreviousPositionInput' + i + '">' +
+		                '</div>';
+			roversInputHtml += roverHtml;
+		  }
+		  roversInputHtml += '<br><div>' +
+		                '<button id"goRovers" onclick="MoveRovers()">Go Rovers!</button>' +
+		                '</div>';
+		  div.insertAdjacentHTML( 'beforeend', roversInputHtml );
+		  div.style.visibility = 'visible';
+		}
+		else
+		{
+		  window.alert('No Rovers!');
+		}
+	  }
+	  
+	  function MoveRovers()
+	  {
+	    var numRovers = document.getElementById('numRovers').value;
+		var gridSize = document.getElementById('gridSize').value;
+		if(gridSize>0)
+		{
+		  var div = document.getElementById('resultTable');
+		  div.innerHTML = '';
+		  var table = '<table>' +
+		              '<thead class="bordered-darkorange">' +
+					  '<tr>' +
+					  '<th>Rover Number</th>' +
+					  '<th>New Location</th>' +
+					  '</tr>' +
+					  '</thead>' +
+					  '<tbody>';
+		  for(i=1; i<=numRovers; i++)
+		  {
+		    var roverMovement = document.getElementById("roverMovementInput" + i).value;
+			var roverPreviousPosition = document.getElementById("roverPreviousPositionInput" + i).value;
+			var newLocation = DefineMovement(roverMovement, roverPreviousPosition);
+			var newLocSplit = newLocation.split(" ");
+			var x = parseInt(newLocSplit[0]);
+			var y = parseInt(newLocSplit[1]);
+			if(x < 0 || x > gridSize || y < 0 || y > gridSize)
+			{
+			  table += '<tr><td>Rover ' + i + '</td><td>Off The Grid</td></tr>';
+			}
+			else
+			{
+			  table += '<tr><td>Rover ' + i + '</td><td>' + newLocation + '</td></tr>';
+			}
+		  }
+		  table += '</tbody></table>';
+		  div.insertAdjacentHTML( 'beforeend', table );
+		  div.style.visibility = 'visible';
+		}
+		else
+		{
+		  window.alert('Grid size cant be 0!');
+		}
+	  }
+	  
+	  function DefineMovement(movementString, previousPosString)
+	  {
+	    movementArray = movementString.split("");
+		previousArray = previousPosString.split(" ");
+		var direction = previousArray[2];
+		var xAxis = parseInt(previousArray[0]);
+		var yAxis = parseInt(previousArray[1]);
+		var length = movementArray.length;
+		for(x=0; x<=length; x++)
+		{
+		  switch(movementArray[x]) 
+		  {
+            case "L":
+            switch(direction)
+		    {
+		      case "N":
+		      direction = "W";
+		      break;
+		      case "W":
+		      direction = "S";
+		      break;
+		      case "S":
+		      direction = "E";
+		      break;
+		      case "E":
+		      direction = "N";
+		      break;
+		    }
+            break;
+            case "R":
+            switch(direction)
+		    {
+		      case "N":
+		      direction = "E";
+		      break;
+		      case "W":
+		      direction = "N";
+		      break;
+		      case "S":
+		      direction = "W";
+		      break;
+		      case "E":
+		      direction = "S";
+		      break;
+		    }
+            break;
+            case "M":
+            switch(direction)
+		    {
+		      case "N":
+		      yAxis = yAxis + 1;
+		      break;
+		      case "W":
+		      xAxis = xAxis - 1;
+		      break;
+		      case "S":
+		      yAxis = yAxis - 1;
+		      break;
+		      case "E":
+		      xAxis = xAxis + 1;
+		      break;
+		    }
+            break;
+          } 
+		}
+		var newLocation = xAxis + ' ' + yAxis + ' ' + direction;
+		return newLocation;
+	  }
+	</script>
+	
+  </body>
+</html>
